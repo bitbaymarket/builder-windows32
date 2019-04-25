@@ -13,3 +13,5 @@ ENV mxedir "/mxe/"
 RUN qmake -v
 
 RUN make MXE_PLUGIN_DIRS="$MXE_PLUGIN_DIRS" MXE_TARGETS="i686-w64-mingw32.static" libqrencode
+
+WORKDIR /mnt
