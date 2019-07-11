@@ -1,4 +1,4 @@
-FROM ubuntu:trusty
+FROM golang:latest 
 MAINTAINER yshurik <yshurik@gmail.com>
 
 RUN apt update
@@ -20,10 +20,10 @@ RUN apt-get -y install \
     libgdk-pixbuf2.0-dev \
     libltdl-dev \
     libssl-dev \
+    libtool-bin \
     libxml-parser-perl \
     make \
     openssl \
-    lzip \
     p7zip-full \
     patch \
     perl \
@@ -35,17 +35,15 @@ RUN apt-get -y install \
     unzip \
     wget \
     xz-utils
-
-
 WORKDIR /
-RUN echo mark1
-RUN git clone https://github.com/mxe/mxe.git
+RUN echo mark5
+RUN git clone https://github.com/yshurik/mxe.git
 WORKDIR /mxe
-RUN git checkout 744f553022aabe5c9946828235b6a5dd9416a6d0
 RUN sed -i 's/DEFAULT_MAX_JOBS   := 6/DEFAULT_MAX_JOBS   := 32/' /mxe/Makefile
+RUN git checkout base0
 
 ENV MXE_TARGETS "i686-w64-mingw32.static"
-ENV MXE_PLUGIN_DIRS plugins/gcc8
+ENV MXE_PLUGIN_DIRS plugins/gcc7
 
 RUN make download-gcc
 RUN make MXE_PLUGIN_DIRS="$MXE_PLUGIN_DIRS" MXE_TARGETS="i686-w64-mingw32.static" cc
@@ -61,7 +59,7 @@ RUN make MXE_TARGETS="$MXE_TARGETS" db4
 ADD openssl.mk /mxe/src/
 RUN make MXE_TARGETS="$MXE_TARGETS" openssl
 RUN make MXE_TARGETS="$MXE_TARGETS" freetds
-RUN make MXE_TARGETS="$MXE_TARGETS" libmysqlclient
-ADD postgresql.mk /mxe/src/
+ADD postgresql.mk /mxe/src
 RUN make MXE_TARGETS="$MXE_TARGETS" postgresql
+RUN make MXE_TARGETS="$MXE_TARGETS" libmysqlclient
 RUN ls /mxe/usr/bin
